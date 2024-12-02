@@ -1,32 +1,28 @@
-import bodyParser from "body-parser";
-import dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
+import bodyParser from "body-parser";
+import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
+import { body, validationResult } from "express-validator";
+import { initializeDatabase } from "./config/database.js";
+import dotenv from "dotenv";
+
+import authRoutes from "./routes/authRoutes.js";
+import dashboardroute from "./routes/dashboardRoutes.js";
 
 dotenv.config();
 
-// Import dependencies
-import express from 'express';
-import bodyParser from 'body-parser';
-import cors from 'cors';
-
-// Initialize the app
 const app = express();
+app.use(cors());
+app.use(bodyParser.json());
 
-// Middleware
-app.use(cors()); // Enable Cross-Origin Resource Sharing
-app.use(bodyParser.json()); // Parse incoming JSON requests
-app.use(bodyParser.urlencoded({ extended: true })); // Parse URL-encoded requests
+app.use("/auth", authRoutes);
+app.use("/dashboard", dashboardroute);
 
-// Example route
-app.get('/', (req, res) => {
-  res.send('Server is running on port 9889!');
-});
+initializeDatabase();
 
-// Start the server
-const PORT = 9889; // Set the port to 9889
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+app.listen(8787, () => {
+  console.log("Server is running on port 8787");
 });
 
 export default app;
