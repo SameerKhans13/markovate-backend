@@ -34,8 +34,16 @@ export const initializeDatabase = async () => {
       expires TIMESTAMP NOT NULL,
       FOREIGN KEY (user_id) REFERENCES users(id)
     );`;
+    const createUserTableQuery = `
+  CREATE TABLE IF NOT EXISTS users (
+    id SERIAL PRIMARY KEY,
+    number VARCHAR(50) NOT NULL,
+    answer VARCHAR(255) NOT NULL
+  );
+`;
 
   try {
+    await pool.query(createUserQuery);
     await pool.query(createUserTableQuery);
     console.log("accounts table initialized");
     // await pool.query(createRefreshTokenTableQuery);

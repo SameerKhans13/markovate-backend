@@ -17,9 +17,9 @@ dotenv.config();
 
 route.post("/signup", async (req, res) => {
   try {
-    const { email, password } = req.body;
-    console.log(email, password);
-    const result = await userSignUp(email, password);
+    const { email, password , account_type } = req.body;
+    console.log(email, password , account_type);
+    const result = await userSignUp(email, password , account_type);
     res.status(result.status).json(result.response);
   } catch (error) {
     res.status(400).json({ errMessage: error.message });

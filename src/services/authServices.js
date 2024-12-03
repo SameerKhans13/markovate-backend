@@ -9,7 +9,7 @@ import { access } from "fs";
 
 dotenv.config();
 
-export const userSignUp = async (email, password) => {
+export const userSignUp = async (email, password, account_type) => {
   const fetchuser = await pool.query(
     `SELECT * FROM accounts WHERE email = $1`,
     [email]
@@ -26,7 +26,7 @@ export const userSignUp = async (email, password) => {
     `INSERT INTO accounts (email, password, token_key, account_type)
       VALUES ($1, $2, $3, $4)
       RETURNING id, email;`,
-    [`${email}`, `${hashedPassword}`, `${tokenKey}`, `client`]
+    [`${email}`, `${hashedPassword}`, `${tokenKey}`, `${account_type}`]
   );
   const accesstoken = jwt.sign(
     { id: user.rows[0].id, email: user.rows[0].email },
@@ -51,6 +51,7 @@ export const userSignUp = async (email, password) => {
     },
   };
 };
+
 
 export const UserSignIn = async (email, password) => {
   const fetchuser = await pool.query(
