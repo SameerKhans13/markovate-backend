@@ -1,3 +1,5 @@
+// it is the emailServices.js file
+
 import transporter from "../config/nodemailer.js";
 import dotenv from "dotenv";
 

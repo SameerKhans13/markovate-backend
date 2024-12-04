@@ -1,3 +1,5 @@
+// it is the authRoutes.js file
+
 import express from "express";
 import pg from "pg";
 const { Pool } = pg;

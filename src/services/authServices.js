@@ -1,3 +1,5 @@
+// it is the authServices.js file
+
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import pool from "../config/database.js";

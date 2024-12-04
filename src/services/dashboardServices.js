@@ -1,3 +1,5 @@
+// it is the dashboardServices.js file
+
 import pool from "../config/database.js";
 import jwt from "jsonwebtoken";
 

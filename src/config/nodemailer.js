@@ -1,3 +1,5 @@
+// it is the nodemailer.js file
+
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 
