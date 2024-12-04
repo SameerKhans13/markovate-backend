@@ -1,32 +1,30 @@
-import bodyParser from "body-parser";
-import dotenv from "dotenv";
-import express from "express";
-import cors from "cors";
+import express from 'express';
+import cors from 'cors';
+import bodyParser from 'body-parser';
+import teacherRoutes from './routes/teacherRoutes.js';
+import studentRoutes from './routes/studentRoutes.js';
+import dotenv from 'dotenv';
+import testRoutes from './routes/testRoutes.js'; 
+import { initDB } from './config/database.js';
 
 dotenv.config();
 
-// Import dependencies
-import express from 'express';
-import bodyParser from 'body-parser';
-import cors from 'cors';
-
-// Initialize the app
 const app = express();
 
 // Middleware
-app.use(cors()); // Enable Cross-Origin Resource Sharing
-app.use(bodyParser.json()); // Parse incoming JSON requests
-app.use(bodyParser.urlencoded({ extended: true })); // Parse URL-encoded requests
+app.use(cors());
+app.use(bodyParser.json());
+app.use(express.json());
 
-// Example route
-app.get('/', (req, res) => {
-  res.send('Server is running on port 9889!');
-});
+// Routes
+app.use('/teachers', teacherRoutes);
+app.use('/students', studentRoutes);
+app.use('/tests', testRoutes);
 
-// Start the server
-const PORT = 9889; // Set the port to 9889
+initDB();
+
+// Server setup
+const PORT = process.env.PORT || 9889;
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });
-
-export default app;
