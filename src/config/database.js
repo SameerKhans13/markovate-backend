@@ -1,55 +1,61 @@
-import pg from "pg";
-const { Pool } = pg;
-
-import dotenv from "dotenv";
-
-dotenv.config();
-
-const pool = new Pool({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  port: process.env.DB_PORT,
-});
-
-// Database initialization function
-export const initializeDatabase = async () => {
-  const createUserQuery = `
-    CREATE TABLE IF NOT EXISTS accounts (
+// database.js
+export const initDB = async () => {
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS teachers (
       id SERIAL PRIMARY KEY,
-      email VARCHAR(255) UNIQUE NOT NULL,
-      password VARCHAR(255) NOT NULL,
-	    account_type VARCHAR(255) NOT NULL,
-      verified BOOLEAN DEFAULT false,
-	    token_key VARCHAR(255) NOT NULL,
-      email_services BOOLEAN[] DEFAULT array[false,false]
-    );`;
+      name VARCHAR(100),
+      email VARCHAR(100) UNIQUE NOT NULL,
+      subject VARCHAR(100),
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
 
-  const createRefreshTokenTableQuery = `
-    CREATE TABLE IF NOT EXISTS refresh_tokens (
+    CREATE TABLE IF NOT EXISTS students (
       id SERIAL PRIMARY KEY,
-      user_id INTEGER NOT NULL,
-      token VARCHAR(255) NOT NULL,
-      expires TIMESTAMP NOT NULL,
-      FOREIGN KEY (user_id) REFERENCES users(id)
-    );`;
-    const createUserTableQuery = `
-  CREATE TABLE IF NOT EXISTS users (
-    id SERIAL PRIMARY KEY,
-    number VARCHAR(50) NOT NULL,
-    answer VARCHAR(255) NOT NULL
-  );
-`;
+      name VARCHAR(100),
+      email VARCHAR(100) UNIQUE NOT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
 
-  try {
-    await pool.query(createUserQuery);
-    await pool.query(createUserTableQuery);
-    console.log("accounts table initialized");
-    // await pool.query(createRefreshTokenTableQuery);
-  } catch (error) {
-    console.error("Database initialization error:", error);
-  }
+    CREATE TABLE IF NOT EXISTS tests (
+      id SERIAL PRIMARY KEY,
+      test_id VARCHAR(100) UNIQUE NOT NULL,
+      teacher_id INTEGER REFERENCES teachers(id),
+      title VARCHAR(200) NOT NULL,
+      duration INTEGER,
+      total_marks INTEGER NOT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS questions (
+      id SERIAL PRIMARY KEY,
+      test_id INTEGER REFERENCES tests(id),
+      question_text TEXT NOT NULL,
+      marks INTEGER NOT NULL,
+      keywords JSONB NOT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS student_answers (
+      id SERIAL PRIMARY KEY,
+      student_id INTEGER REFERENCES students(id),
+      test_id INTEGER REFERENCES tests(id),
+      question_id INTEGER REFERENCES questions(id),
+      answer_text TEXT NOT NULL,
+      marks_obtained INTEGER,
+      feedback TEXT,
+      keywords_matched JSONB,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      UNIQUE(student_id, test_id, question_id)
+    );
+
+    CREATE TABLE IF NOT EXISTS test_submissions (
+      id SERIAL PRIMARY KEY,
+      student_id INTEGER REFERENCES students(id),
+      test_id INTEGER REFERENCES tests(id),
+      total_marks INTEGER NOT NULL,
+      submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      status VARCHAR(20) DEFAULT 'submitted',
+      UNIQUE(student_id, test_id)
+    );
+  `);
 };
-
-export default pool;

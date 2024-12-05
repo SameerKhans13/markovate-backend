@@ -1,0 +1,36 @@
+{
+    "watch": [
+      "src",
+      "config",
+      ".env"
+    ],
+    "ignore": [
+      "node_modules",
+      "uploads/*",
+      "logs/*",
+      "coverage",
+      "*.test.js",
+      "tests"
+    ],
+    "ext": "js,json",
+    "exec": "node --experimental-specifier-resolution=node server.js",
+    "env": {
+      "NODE_ENV": "development"
+    },
+    "verbose": true,
+    "restartable": "rs",
+    "colours": true,
+    "events": {
+      "restart": "clear"
+    },
+    "delay": "1000",
+    "legacyWatch": false,
+    "signal": "SIGTERM",
+    "stdin": false,
+    "stdout": true,
+    "watchOptions": {
+      "followSymlinks": false,
+      "usePolling": false,
+      "interval": 1000
+    }
+   }
